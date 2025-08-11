@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { CodeEditor } from "@/components/CodeEditor";
 
 export const SvgEditorTool = () => {
   const [code, setCode] = useState<string>(
@@ -52,7 +52,7 @@ export const SvgEditorTool = () => {
             <Input type="file" accept=".svg,image/svg+xml" onChange={(e) => e.target.files && loadFile(e.target.files[0])} />
             <Button variant="outline" onClick={download}>下载 SVG</Button>
           </div>
-          <Textarea value={code} onChange={(e) => setCode(e.target.value)} rows={18} />
+          <CodeEditor value={code} onChange={setCode} language="markup" minHeight={280} />
           {error && <p className="text-destructive text-sm">{error}</p>}
         </CardContent>
       </Card>

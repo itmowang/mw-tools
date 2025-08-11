@@ -1,5 +1,6 @@
-import { Card, Input, Space, Alert, Typography, Button } from "antd";
+import { Card, Space, Alert, Typography, Button } from "antd";
 import { useMemo, useState } from "react";
+import { CodeEditor } from "@/components/CodeEditor";
 
 export const JsonFormatterTool = () => {
   const [raw, setRaw] = useState("");
@@ -18,17 +19,17 @@ export const JsonFormatterTool = () => {
   return (
     <Card title="JSON 格式化" className="hover-scale">
       <Space direction="vertical" className="w-full">
-        <Input.TextArea rows={8} placeholder="粘贴 JSON 文本..." value={raw} onChange={(e) => setRaw(e.target.value)} />
+        <CodeEditor language="json" value={raw} onChange={setRaw} minHeight={200} />
         <div className="flex items-center gap-3">
-          <Input type="number" min={0} max={8} value={indent} onChange={(e) => setIndent(Number(e.target.value))} style={{ width: 120 }} />
+          <input type="number" min={0} max={8} value={indent} onChange={(e) => setIndent(Number(e.target.value))} className="w-28 border rounded px-2 py-1 bg-background" />
           <Button onClick={() => setRaw(parsed.pretty)} disabled={!parsed.ok || !parsed.pretty}>替换为格式化结果</Button>
         </div>
         {parsed.ok ? (
           parsed.pretty ? (
             <>
               <Alert type="success" message="已校验：JSON 有效" showIcon />
-              <Typography.Paragraph copyable className="whitespace-pre-wrap break-all">
-                {parsed.pretty}
+              <Typography.Paragraph className="whitespace-pre-wrap break-all">
+                <code className="text-sm block">{parsed.pretty}</code>
               </Typography.Paragraph>
             </>
           ) : null

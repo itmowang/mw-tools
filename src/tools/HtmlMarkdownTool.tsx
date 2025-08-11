@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { CodeEditor } from "@/components/CodeEditor";
 import { marked } from "marked";
 import TurndownService from "turndown";
 
@@ -27,7 +27,9 @@ export const HtmlMarkdownTool = () => {
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader><CardTitle>Markdown</CardTitle></CardHeader>
-            <CardContent><Textarea rows={18} value={md} onChange={(e) => setMd(e.target.value)} /></CardContent>
+            <CardContent>
+              <CodeEditor language="markdown" value={md} onChange={setMd} minHeight={280} />
+            </CardContent>
           </Card>
           <Card>
             <CardHeader><CardTitle>HTML 预览</CardTitle></CardHeader>
@@ -42,12 +44,14 @@ export const HtmlMarkdownTool = () => {
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader><CardTitle>HTML</CardTitle></CardHeader>
-            <CardContent><Textarea rows={18} value={html} onChange={(e) => setHtml(e.target.value)} /></CardContent>
+            <CardContent>
+              <CodeEditor language="markup" value={html} onChange={setHtml} minHeight={280} />
+            </CardContent>
           </Card>
           <Card>
             <CardHeader><CardTitle>Markdown 结果</CardTitle></CardHeader>
             <CardContent>
-              <Textarea readOnly rows={18} value={htmlToMd} />
+              <CodeEditor readOnly language="markdown" value={htmlToMd} onChange={() => {}} minHeight={280} />
               <div className="mt-3"><Button onClick={() => navigator.clipboard.writeText(htmlToMd)}>复制 Markdown</Button></div>
             </CardContent>
           </Card>
