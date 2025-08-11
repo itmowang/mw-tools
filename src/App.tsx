@@ -26,6 +26,14 @@ const App = () => {
               <Route path="/text" element={<ToolsPage defaultTool="text" />} />
               <Route path="/json" element={<ToolsPage defaultTool="json" />} />
               <Route path="/image" element={<ToolsPage defaultTool="image" />} />
+              <Route path="/qrcode" element={<ToolsPage defaultTool="qrcode" />} />
+              <Route path="/qrcode-batch" element={<ToolsPage defaultTool="qrcode-batch" />} />
+              <Route path="/base64" element={<ToolsPage defaultTool="base64" />} />
+              <Route path="/url" element={<ToolsPage defaultTool="url" />} />
+              <Route path="/password" element={<ToolsPage defaultTool="password" />} />
+              <Route path="/md5" element={<ToolsPage defaultTool="md5" />} />
+              <Route path="/jwt" element={<ToolsPage defaultTool="jwt" />} />
+              <Route path="/timestamp" element={<ToolsPage defaultTool="timestamp" />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -7,6 +7,10 @@ import {
   CodeOutlined,
   PictureOutlined,
   AppstoreOutlined,
+  QrcodeOutlined,
+  LockOutlined,
+  FieldTimeOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import { useEffect, useMemo, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -27,6 +31,8 @@ const groupedItems: ItemType[] = [
     icon: <AppstoreOutlined />,
     children: [
       { key: "/calculator", label: "计算器", icon: <CalculatorOutlined /> },
+      { key: "/timestamp", label: "时间戳转换", icon: <FieldTimeOutlined /> },
+      { key: "/password", label: "随机密码生成", icon: <LockOutlined /> },
     ],
   },
   {
@@ -43,6 +49,10 @@ const groupedItems: ItemType[] = [
     icon: <CodeOutlined />,
     children: [
       { key: "/json", label: "JSON 格式化", icon: <CodeOutlined /> },
+      { key: "/base64", label: "Base64 编解码", icon: <CodeOutlined /> },
+      { key: "/url", label: "URL 编解码", icon: <LinkOutlined /> },
+      { key: "/md5", label: "MD5 在线加密", icon: <CodeOutlined /> },
+      { key: "/jwt", label: "JWT 解析工具", icon: <CodeOutlined /> },
     ],
   },
   {
@@ -51,6 +61,8 @@ const groupedItems: ItemType[] = [
     icon: <PictureOutlined />,
     children: [
       { key: "/image", label: "图像编辑", icon: <PictureOutlined /> },
+      { key: "/qrcode", label: "二维码生成", icon: <QrcodeOutlined /> },
+      { key: "/qrcode-batch", label: "二维码批量生成", icon: <QrcodeOutlined /> },
     ],
   },
 ];
@@ -86,7 +98,6 @@ export const SidebarNav = () => {
   const selectedKey = location.pathname;
   const computedOpen = useMemo(() => {
     if (search.trim()) {
-      // 打开所有有匹配项的分组
       return items.map((g) => g.key);
     }
     const g = findGroupKeyByPath(selectedKey);

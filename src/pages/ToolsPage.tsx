@@ -4,6 +4,14 @@ import { CalculatorTool } from "@/tools/CalculatorTool";
 import { TextTool } from "@/tools/TextTool";
 import { JsonFormatterTool } from "@/tools/JsonFormatterTool";
 import { ImageEditorTool } from "@/tools/ImageEditorTool";
+import { QrCodeTool } from "@/tools/QrCodeTool";
+import { QrCodeBatchTool } from "@/tools/QrCodeBatchTool";
+import { Base64Tool } from "@/tools/Base64Tool";
+import { UrlTool } from "@/tools/UrlTool";
+import { PasswordTool } from "@/tools/PasswordTool";
+import { Md5Tool } from "@/tools/Md5Tool";
+import { JwtTool } from "@/tools/JwtTool";
+import { TimestampTool } from "@/tools/TimestampTool";
 import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -17,6 +25,22 @@ const ToolRenderer = ({ id }: { id: ToolId }) => {
       return <JsonFormatterTool />;
     case "image":
       return <ImageEditorTool />;
+    case "qrcode":
+      return <QrCodeTool />;
+    case "qrcode-batch":
+      return <QrCodeBatchTool />;
+    case "base64":
+      return <Base64Tool />;
+    case "url":
+      return <UrlTool />;
+    case "password":
+      return <PasswordTool />;
+    case "md5":
+      return <Md5Tool />;
+    case "jwt":
+      return <JwtTool />;
+    case "timestamp":
+      return <TimestampTool />;
     default:
       return null;
   }
