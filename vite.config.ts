@@ -6,7 +6,7 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: './',
+  base: '/mw-tools/',
   server: {
     host: "::",
     port: 8080,

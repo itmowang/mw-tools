@@ -19,7 +19,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter basename="/mw-tools/">
             <Routes>
               <Route path="/" element={<ToolsPage defaultTool="calculator" />} />
               <Route path="/calculator" element={<ToolsPage defaultTool="calculator" />} />
