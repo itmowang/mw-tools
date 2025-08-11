@@ -21,6 +21,7 @@ type ItemType = {
   key: string;
   label: string;
   icon?: React.ReactNode;
+  disabled?: boolean;
   children?: ItemType[];
 };
 
@@ -34,6 +35,16 @@ const groupedItems: ItemType[] = [
       { key: "/timestamp", label: "时间戳转换", icon: <FieldTimeOutlined /> },
       { key: "/password", label: "随机密码生成", icon: <LockOutlined /> },
       { key: "/color", label: "颜色工具", icon: <AppstoreOutlined /> },
+    ],
+  },
+  {
+    key: "life",
+    label: "生活日常",
+    icon: <AppstoreOutlined />,
+    children: [
+      { key: "/mortgage", label: "房贷利率调整计算器", icon: <CalculatorOutlined /> },
+      { key: "/bmi", label: "BMI 计算", icon: <CalculatorOutlined /> },
+      { key: "/social-insurance", label: "五险一金计算", icon: <CalculatorOutlined /> },
     ],
   },
   {
@@ -71,6 +82,14 @@ const groupedItems: ItemType[] = [
       { key: "/qrcode", label: "二维码生成", icon: <QrcodeOutlined /> },
       { key: "/qrcode-batch", label: "二维码批量生成", icon: <QrcodeOutlined /> },
       { key: "/svg", label: "SVG 编辑器", icon: <PictureOutlined /> },
+    ],
+  },
+  {
+    key: "ai",
+    label: "AI 功能",
+    icon: <AppstoreOutlined />,
+    children: [
+      { key: "/ai", label: "敬请期待", icon: <AppstoreOutlined />, disabled: true },
     ],
   },
 ];

@@ -18,7 +18,11 @@ export type ToolId =
   | "regex"
   | "http"
   | "html-markdown"
-  | "color";
+  | "color"
+  | "mortgage"
+  | "bmi"
+  | "social-insurance";
+
 
 export const toolMeta: Record<ToolId, { title: string; description: string; path: string }> = {
   calculator: { title: "计算器", description: "输入表达式，立即得到结果。", path: "/calculator" },
@@ -41,4 +45,7 @@ export const toolMeta: Record<ToolId, { title: string; description: string; path
   http: { title: "HTTP 请求测试", description: "构造请求、查看响应状态/头/体。", path: "/http" },
   "html-markdown": { title: "HTML 与 Markdown 互转", description: "MD→HTML 与 HTML→MD，双向预览。", path: "/html-markdown" },
   color: { title: "颜色工具", description: "取色、格式转换、调色板生成。", path: "/color" },
+  mortgage: { title: "房贷利率调整计算器", description: "比较利率调整前后的月供与总利息。", path: "/mortgage" },
+  bmi: { title: "BMI 计算", description: "输入身高体重，计算 BMI 与体重分类。", path: "/bmi" },
+  "social-insurance": { title: "五险一金计算", description: "根据基数与比例，估算个人与单位缴费。", path: "/social-insurance" },
 };

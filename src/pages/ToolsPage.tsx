@@ -20,6 +20,9 @@ import { RegexTool } from "@/tools/RegexTool";
 import { HttpRequestTool } from "@/tools/HttpRequestTool";
 import { HtmlMarkdownTool } from "@/tools/HtmlMarkdownTool";
 import { ColorTool } from "@/tools/ColorTool";
+import { MortgageTool } from "@/tools/MortgageTool";
+import { BmiTool } from "@/tools/BmiTool";
+import { SocialInsuranceTool } from "@/tools/SocialInsuranceTool";
 import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -65,6 +68,12 @@ const ToolRenderer = ({ id }: { id: ToolId }) => {
       return <HtmlMarkdownTool />;
     case "color":
       return <ColorTool />;
+    case "mortgage":
+      return <MortgageTool />;
+    case "bmi":
+      return <BmiTool />;
+    case "social-insurance":
+      return <SocialInsuranceTool />;
     default:
       return null;
   }

@@ -42,6 +42,9 @@ const App = () => {
               <Route path="/http" element={<ToolsPage defaultTool="http" />} />
               <Route path="/html-markdown" element={<ToolsPage defaultTool="html-markdown" />} />
               <Route path="/color" element={<ToolsPage defaultTool="color" />} />
+              <Route path="/mortgage" element={<ToolsPage defaultTool="mortgage" />} />
+              <Route path="/bmi" element={<ToolsPage defaultTool="bmi" />} />
+              <Route path="/social-insurance" element={<ToolsPage defaultTool="social-insurance" />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
