@@ -35,7 +35,10 @@ export const FlvPlayerTool: React.FC = () => {
     flvRef.current = player;
     player.attachMediaElement(videoRef.current);
     player.load();
-    player.play().catch((e: any) => setError(`自动播放失败：${String(e)}`));
+    const _p: any = (player as any).play?.();
+    if (_p && typeof _p.catch === "function") {
+      _p.catch((e: any) => setError(`自动播放失败：${String(e)}`));
+    }
 
     player.on(flvjs.Events.ERROR, (type: any, detail: any) => {
       setError(`FLV 播放错误：${type} - ${JSON.stringify(detail)}`);
