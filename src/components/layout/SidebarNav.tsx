@@ -33,6 +33,7 @@ const groupedItems: ItemType[] = [
       { key: "/calculator", label: "计算器", icon: <CalculatorOutlined /> },
       { key: "/timestamp", label: "时间戳转换", icon: <FieldTimeOutlined /> },
       { key: "/password", label: "随机密码生成", icon: <LockOutlined /> },
+      { key: "/color", label: "颜色工具", icon: <AppstoreOutlined /> },
     ],
   },
   {
@@ -41,6 +42,7 @@ const groupedItems: ItemType[] = [
     icon: <FontSizeOutlined />,
     children: [
       { key: "/text", label: "文本处理", icon: <FontSizeOutlined /> },
+      { key: "/html-markdown", label: "HTML 与 Markdown 互转", icon: <CodeOutlined /> },
     ],
   },
   {
@@ -53,6 +55,11 @@ const groupedItems: ItemType[] = [
       { key: "/url", label: "URL 编解码", icon: <LinkOutlined /> },
       { key: "/md5", label: "MD5 在线加密", icon: <CodeOutlined /> },
       { key: "/jwt", label: "JWT 解析工具", icon: <CodeOutlined /> },
+      { key: "/css-gradient", label: "CSS 渐变生成器", icon: <CodeOutlined /> },
+      { key: "/yaml-properties", label: "YAML 与 Properties 互转", icon: <CodeOutlined /> },
+      { key: "/cron", label: "Cron 表达式生成器", icon: <CodeOutlined /> },
+      { key: "/regex", label: "正则表达式工具", icon: <CodeOutlined /> },
+      { key: "/http", label: "HTTP 请求测试", icon: <LinkOutlined /> },
     ],
   },
   {
@@ -63,6 +70,7 @@ const groupedItems: ItemType[] = [
       { key: "/image", label: "图像编辑", icon: <PictureOutlined /> },
       { key: "/qrcode", label: "二维码生成", icon: <QrcodeOutlined /> },
       { key: "/qrcode-batch", label: "二维码批量生成", icon: <QrcodeOutlined /> },
+      { key: "/svg", label: "SVG 编辑器", icon: <PictureOutlined /> },
     ],
   },
 ];

@@ -1,7 +1,26 @@
-export type ToolId = "calculator" | "text" | "json" | "image" |
-  "qrcode" | "qrcode-batch" | "base64" | "url" | "password" | "md5" | "jwt" | "timestamp";
+export type ToolId =
+  | "calculator"
+  | "text"
+  | "json"
+  | "image"
+  | "qrcode"
+  | "qrcode-batch"
+  | "base64"
+  | "url"
+  | "password"
+  | "md5"
+  | "jwt"
+  | "timestamp"
+  | "svg"
+  | "css-gradient"
+  | "yaml-properties"
+  | "cron"
+  | "regex"
+  | "http"
+  | "html-markdown"
+  | "color";
 
-export const toolMeta: Record<ToolId, { title: string; description: string; path: string } > = {
+export const toolMeta: Record<ToolId, { title: string; description: string; path: string }> = {
   calculator: { title: "计算器", description: "输入表达式，立即得到结果。", path: "/calculator" },
   text: { title: "文本处理", description: "大小写转换、字数统计、去空格等。", path: "/text" },
   json: { title: "JSON 格式化", description: "格式化 / 压缩 JSON，校验语法。", path: "/json" },
@@ -14,4 +33,12 @@ export const toolMeta: Record<ToolId, { title: string; description: string; path
   md5: { title: "MD5 在线加密", description: "对文本进行 MD5 摘要计算。", path: "/md5" },
   jwt: { title: "JWT 解析工具", description: "解析 JWT 头部与载荷（不验证签名）。", path: "/jwt" },
   timestamp: { title: "时间戳转换", description: "Unix 时间戳与日期时间互转（本地/UTC）。", path: "/timestamp" },
+  svg: { title: "SVG 编辑器", description: "在线编辑/预览 SVG 代码，支持上传与下载。", path: "/svg" },
+  "css-gradient": { title: "CSS 渐变生成器", description: "可视化生成 linear-gradient 代码。", path: "/css-gradient" },
+  "yaml-properties": { title: "YAML 与 Properties 互转", description: "在 YAML 与 .properties 之间相互转换。", path: "/yaml-properties" },
+  cron: { title: "Cron 表达式生成器", description: "交互式选择，快速生成 Cron 表达式。", path: "/cron" },
+  regex: { title: "正则表达式工具", description: "测试正则，查看高亮匹配与分组。", path: "/regex" },
+  http: { title: "HTTP 请求测试", description: "构造请求、查看响应状态/头/体。", path: "/http" },
+  "html-markdown": { title: "HTML 与 Markdown 互转", description: "MD→HTML 与 HTML→MD，双向预览。", path: "/html-markdown" },
+  color: { title: "颜色工具", description: "取色、格式转换、调色板生成。", path: "/color" },
 };

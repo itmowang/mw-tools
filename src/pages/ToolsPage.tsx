@@ -12,6 +12,14 @@ import { PasswordTool } from "@/tools/PasswordTool";
 import { Md5Tool } from "@/tools/Md5Tool";
 import { JwtTool } from "@/tools/JwtTool";
 import { TimestampTool } from "@/tools/TimestampTool";
+import { SvgEditorTool } from "@/tools/SvgEditorTool";
+import { CssGradientTool } from "@/tools/CssGradientTool";
+import { YamlPropertiesTool } from "@/tools/YamlPropertiesTool";
+import { CronTool } from "@/tools/CronTool";
+import { RegexTool } from "@/tools/RegexTool";
+import { HttpRequestTool } from "@/tools/HttpRequestTool";
+import { HtmlMarkdownTool } from "@/tools/HtmlMarkdownTool";
+import { ColorTool } from "@/tools/ColorTool";
 import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -41,6 +49,22 @@ const ToolRenderer = ({ id }: { id: ToolId }) => {
       return <JwtTool />;
     case "timestamp":
       return <TimestampTool />;
+    case "svg":
+      return <SvgEditorTool />;
+    case "css-gradient":
+      return <CssGradientTool />;
+    case "yaml-properties":
+      return <YamlPropertiesTool />;
+    case "cron":
+      return <CronTool />;
+    case "regex":
+      return <RegexTool />;
+    case "http":
+      return <HttpRequestTool />;
+    case "html-markdown":
+      return <HtmlMarkdownTool />;
+    case "color":
+      return <ColorTool />;
     default:
       return null;
   }

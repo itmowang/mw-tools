@@ -34,6 +34,14 @@ const App = () => {
               <Route path="/md5" element={<ToolsPage defaultTool="md5" />} />
               <Route path="/jwt" element={<ToolsPage defaultTool="jwt" />} />
               <Route path="/timestamp" element={<ToolsPage defaultTool="timestamp" />} />
+              <Route path="/svg" element={<ToolsPage defaultTool="svg" />} />
+              <Route path="/css-gradient" element={<ToolsPage defaultTool="css-gradient" />} />
+              <Route path="/yaml-properties" element={<ToolsPage defaultTool="yaml-properties" />} />
+              <Route path="/cron" element={<ToolsPage defaultTool="cron" />} />
+              <Route path="/regex" element={<ToolsPage defaultTool="regex" />} />
+              <Route path="/http" element={<ToolsPage defaultTool="http" />} />
+              <Route path="/html-markdown" element={<ToolsPage defaultTool="html-markdown" />} />
+              <Route path="/color" element={<ToolsPage defaultTool="color" />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
