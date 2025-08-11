@@ -45,6 +45,11 @@ const App = () => {
               <Route path="/mortgage" element={<ToolsPage defaultTool="mortgage" />} />
               <Route path="/bmi" element={<ToolsPage defaultTool="bmi" />} />
               <Route path="/social-insurance" element={<ToolsPage defaultTool="social-insurance" />} />
+              <Route path="/hls" element={<ToolsPage defaultTool="hls" />} />
+              <Route path="/mp4" element={<ToolsPage defaultTool="mp4" />} />
+              <Route path="/mpegts" element={<ToolsPage defaultTool="mpegts" />} />
+              <Route path="/flv" element={<ToolsPage defaultTool="flv" />} />
+              <Route path="/websocket" element={<ToolsPage defaultTool="websocket" />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -74,6 +74,18 @@ const groupedItems: ItemType[] = [
     ],
   },
   {
+    key: "net-media",
+    label: "网络与媒体",
+    icon: <LinkOutlined />,
+    children: [
+      { key: "/hls", label: "HLS 在线播放", icon: <LinkOutlined /> },
+      { key: "/mp4", label: "MP4 在线播放", icon: <LinkOutlined /> },
+      { key: "/mpegts", label: "MPEG-TS 在线播放", icon: <LinkOutlined /> },
+      { key: "/flv", label: "FLV 在线播放", icon: <LinkOutlined /> },
+      { key: "/websocket", label: "WebSocket 在线测试", icon: <LinkOutlined /> },
+    ],
+  },
+  {
     key: "image-cat",
     label: "图像处理",
     icon: <PictureOutlined />,

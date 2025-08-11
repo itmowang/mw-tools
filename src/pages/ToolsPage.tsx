@@ -25,6 +25,11 @@ import { BmiTool } from "@/tools/BmiTool";
 import { SocialInsuranceTool } from "@/tools/SocialInsuranceTool";
 import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { HlsPlayerTool } from "@/tools/HlsPlayerTool";
+import { Mp4PlayerTool } from "@/tools/Mp4PlayerTool";
+import { MpegPlayerTool } from "@/tools/MpegPlayerTool";
+import { FlvPlayerTool } from "@/tools/FlvPlayerTool";
+import { WebSocketTool } from "@/tools/WebSocketTool";
 
 const ToolRenderer = ({ id }: { id: ToolId }) => {
   switch (id) {
@@ -74,6 +79,16 @@ const ToolRenderer = ({ id }: { id: ToolId }) => {
       return <BmiTool />;
     case "social-insurance":
       return <SocialInsuranceTool />;
+    case "hls":
+      return <HlsPlayerTool />;
+    case "mp4":
+      return <Mp4PlayerTool />;
+    case "mpegts":
+      return <MpegPlayerTool />;
+    case "flv":
+      return <FlvPlayerTool />;
+    case "websocket":
+      return <WebSocketTool />;
     default:
       return null;
   }

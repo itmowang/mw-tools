@@ -21,7 +21,13 @@ export type ToolId =
   | "color"
   | "mortgage"
   | "bmi"
+  | "hls"
+  | "mp4"
+  | "mpegts"
+  | "flv"
+  | "websocket"
   | "social-insurance";
+
 
 
 export const toolMeta: Record<ToolId, { title: string; description: string; path: string }> = {
@@ -48,4 +54,9 @@ export const toolMeta: Record<ToolId, { title: string; description: string; path
   mortgage: { title: "房贷利率调整计算器", description: "比较利率调整前后的月供与总利息。", path: "/mortgage" },
   bmi: { title: "BMI 计算", description: "输入身高体重，计算 BMI 与体重分类。", path: "/bmi" },
   "social-insurance": { title: "五险一金计算", description: "根据基数与比例，估算个人与单位缴费。", path: "/social-insurance" },
+  hls: { title: "HLS 在线播放", description: "粘贴 m3u8 地址测试播放，显示详细错误。", path: "/hls" },
+  mp4: { title: "MP4 在线播放", description: "粘贴 mp4 地址测试播放，显示详细错误。", path: "/mp4" },
+  mpegts: { title: "MPEG-TS 在线播放", description: "粘贴 .ts/mpeg 地址测试播放，显示详细错误。", path: "/mpegts" },
+  flv: { title: "FLV 在线播放", description: "粘贴 flv 地址测试播放，显示详细错误。", path: "/flv" },
+  websocket: { title: "WebSocket 在线测试", description: "连接服务器发送/接收消息，详细错误与日志。", path: "/websocket" },
 };
