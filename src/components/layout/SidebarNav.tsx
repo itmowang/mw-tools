@@ -155,7 +155,7 @@ export const SidebarNav = () => {
       className="sticky top-0 h-screen hidden md:block"
     >
       <div className="h-12 flex items-center px-4 text-sm font-semibold" style={{ color: "hsl(var(--sidebar-foreground))" }}>
-        Utility Forge
+        魔王Web工具箱
       </div>
       <Menu
         mode="inline"

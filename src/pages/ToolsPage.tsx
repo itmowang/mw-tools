@@ -110,7 +110,7 @@ const ToolsPage = ({ defaultTool }: Props) => {
 
   useEffect(() => {
     const meta = toolMeta[current];
-    document.title = `Utility Forge｜${meta.title}`;
+    document.title = `魔王Web工具箱｜${meta.title}`;
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute('content', meta.description);
   }, [current]);
