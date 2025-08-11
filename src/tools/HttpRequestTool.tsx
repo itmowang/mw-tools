@@ -11,11 +11,11 @@ export const HttpRequestTool = () => {
   const [method, setMethod] = useState<"GET" | "POST" | "PUT" | "PATCH" | "DELETE">("GET");
   const [url, setUrl] = useState("https://jsonplaceholder.typicode.com/todos/1");
   const [headers, setHeaders] = useState<HeaderRow[]>([{ key: "Accept", value: "application/json" }]);
-  const [body, setBody] = useState("{
-  \"title\": \"foo\",
-  \"body\": \"bar\",
-  \"userId\": 1
-}");
+  const [body, setBody] = useState(`{
+  "title": "foo",
+  "body": "bar",
+  "userId": 1
+}`);
   const [status, setStatus] = useState<string>("");
   const [respHeaders, setRespHeaders] = useState<string>("");
   const [respBody, setRespBody] = useState<string>("");
