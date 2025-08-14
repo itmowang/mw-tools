@@ -13,7 +13,6 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   build:{
-    outDir:"docs",
      minify: true,
     rollupOptions: {
       output: {
