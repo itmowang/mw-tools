@@ -128,7 +128,7 @@ const NetworkArticleTool: React.FC = () => {
             <GlobalOutlined className="mr-2" />
             网络文章生成器
           </Title>
-          <Paragraph className="text-muted-foreground mb-6">
+          <Paragraph type="secondary" className="mb-6">
             基于Perplexity AI搜索最新网络热点，生成具有独特观点的文章总结
           </Paragraph>
 
@@ -169,8 +169,8 @@ const NetworkArticleTool: React.FC = () => {
           {loading && (
             <div className="text-center py-12">
               <Spin size="large" />
-              <div className="mt-4 text-muted-foreground">
-                正在搜索网络热点并生成文章...
+              <div className="mt-4">
+                <Text type="secondary">正在搜索网络热点并生成文章...</Text>
               </div>
             </div>
           )}
@@ -178,7 +178,7 @@ const NetworkArticleTool: React.FC = () => {
           {result && (
             <div className="space-y-6">
               {/* 文章标题 */}
-              <Card className="border-l-4 border-l-primary">
+              <Card style={{ borderLeft: '4px solid #1890ff' }}>
                 <div className="p-6">
                   <Title level={3} className="mb-0">
                     {result.title}
@@ -212,7 +212,7 @@ const NetworkArticleTool: React.FC = () => {
                         <div className="space-y-2">
                           {result.keyPoints.map((point, index) => (
                             <div key={index} className="flex items-start gap-2">
-                              <span className="inline-block w-5 h-5 bg-primary text-white text-xs rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <span className="inline-block w-5 h-5 text-white text-xs rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#1890ff' }}>
                                 {index + 1}
                               </span>
                               <Text className="text-sm">{point}</Text>
@@ -242,8 +242,10 @@ const NetworkArticleTool: React.FC = () => {
                         <Title level={5} className="mb-3">信息来源</Title>
                         <div className="space-y-1">
                           {result.sources.map((source, index) => (
-                            <div key={index} className="text-xs text-muted-foreground">
-                              • {source}
+                            <div key={index}>
+                              <Text type="secondary" style={{ fontSize: '12px' }}>
+                                • {source}
+                              </Text>
                             </div>
                           ))}
                         </div>
@@ -254,13 +256,13 @@ const NetworkArticleTool: React.FC = () => {
               </Row>
 
               {/* 独特观点 */}
-              <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+              <Card style={{ background: 'linear-gradient(135deg, #e6f7ff 0%, #f9f0ff 100%)', border: '1px solid #91d5ff' }}>
                 <div className="p-6">
-                  <Title level={4} className="flex items-center mb-4 text-blue-700">
+                  <Title level={4} className="flex items-center mb-4" style={{ color: '#1890ff' }}>
                     <BulbOutlined className="mr-2" />
                     独特观点
                   </Title>
-                  <Paragraph className="text-base text-blue-800 mb-0">
+                  <Paragraph className="text-base mb-0" style={{ color: '#096dd9' }}>
                     {result.uniqueViewpoint}
                   </Paragraph>
                 </div>
