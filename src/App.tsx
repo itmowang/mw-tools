@@ -50,6 +50,7 @@ const App = () => {
               <Route path="/mpegts" element={<ToolsPage defaultTool="mpegts" />} />
               <Route path="/flv" element={<ToolsPage defaultTool="flv" />} />
               <Route path="/websocket" element={<ToolsPage defaultTool="websocket" />} />
+              <Route path="/cholesterol-ai" element={<ToolsPage defaultTool="cholesterol-ai" />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
