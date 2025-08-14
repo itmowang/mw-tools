@@ -31,7 +31,7 @@ import { MpegPlayerTool } from "@/tools/MpegPlayerTool";
 import { FlvPlayerTool } from "@/tools/FlvPlayerTool";
 import { WebSocketTool } from "@/tools/WebSocketTool";
 import { CholesterolAiTool } from "@/tools/CholesterolAiTool";
-import NetworkArticleTool from "@/tools/NetworkArticleTool";
+import { NetworkArticleTool } from "@/tools/NetworkArticleTool";
 
 const ToolRenderer = ({ id }: { id: ToolId }) => {
   switch (id) {

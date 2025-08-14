@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Input, Card, Alert, Spin, Typography, Row, Col, Tag, Divider } from 'antd';
+import { Button, Input, Card, Alert, Spin, Typography, Row, Col, Tag } from 'antd';
 import { SearchOutlined, FileTextOutlined, GlobalOutlined, BulbOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph, Text } = Typography;
-const { TextArea } = Input;
 
 interface ArticleResult {
   title: string;
@@ -14,7 +13,7 @@ interface ArticleResult {
   sources: string[];
 }
 
-const NetworkArticleTool: React.FC = () => {
+export const NetworkArticleTool = () => {
   const [topic, setTopic] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ArticleResult | null>(null);
@@ -92,10 +91,8 @@ const NetworkArticleTool: React.FC = () => {
         throw new Error('API返回内容为空');
       }
 
-      // 尝试解析JSON
       let parsedResult: ArticleResult;
       try {
-        // 提取JSON部分（去除可能的额外文本）
         const jsonMatch = content.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
           throw new Error('返回内容不包含有效的JSON格式');
@@ -106,7 +103,6 @@ const NetworkArticleTool: React.FC = () => {
         throw new Error('返回的数据格式不正确，请重试');
       }
 
-      // 验证必要字段
       if (!parsedResult.title || !parsedResult.summary) {
         throw new Error('返回数据缺少必要字段');
       }
@@ -121,158 +117,176 @@ const NetworkArticleTool: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <Card>
-        <div className="p-6">
-          <Title level={2} className="mb-4">
-            <GlobalOutlined className="mr-2" />
-            网络文章生成器
-          </Title>
-          <Paragraph type="secondary" className="mb-6">
-            基于Perplexity AI搜索最新网络热点，生成具有独特观点的文章总结
-          </Paragraph>
+    <div className="max-w-6xl mx-auto p-6">
+      <div style={{ marginBottom: '24px' }}>
+        <Card>
+          <div className="p-6">
+            <Title level={2} className="mb-4">
+              <GlobalOutlined style={{ marginRight: '8px' }} />
+              网络文章生成器
+            </Title>
+            <Paragraph type="secondary" className="mb-6">
+              基于Perplexity AI搜索最新网络热点，生成具有独特观点的文章总结
+            </Paragraph>
 
-          <Row gutter={16} align="middle" className="mb-6">
-            <Col flex="auto">
-              <Input
-                size="large"
-                placeholder="输入您想了解的话题或关键词..."
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                onPressEnter={generateArticle}
-                prefix={<SearchOutlined />}
+            <Row gutter={16} align="middle" className="mb-6">
+              <Col flex="auto">
+                <Input
+                  size="large"
+                  placeholder="输入您想了解的话题或关键词..."
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  onPressEnter={generateArticle}
+                  prefix={<SearchOutlined />}
+                />
+              </Col>
+              <Col>
+                <Button 
+                  type="primary" 
+                  size="large"
+                  onClick={generateArticle}
+                  loading={loading}
+                  icon={<FileTextOutlined />}
+                >
+                  生成文章
+                </Button>
+              </Col>
+            </Row>
+
+            {error && (
+              <Alert
+                type="error"
+                message="生成失败"
+                description={error}
+                className="mb-6"
+                showIcon
               />
-            </Col>
-            <Col>
-              <Button 
-                type="primary" 
-                size="large"
-                onClick={generateArticle}
-                loading={loading}
-                icon={<FileTextOutlined />}
-              >
-                生成文章
-              </Button>
-            </Col>
-          </Row>
+            )}
 
-          {error && (
-            <Alert
-              type="error"
-              message="生成失败"
-              description={error}
-              className="mb-6"
-              showIcon
-            />
-          )}
-
-          {loading && (
-            <div className="text-center py-12">
-              <Spin size="large" />
-              <div className="mt-4">
-                <Text type="secondary">正在搜索网络热点并生成文章...</Text>
-              </div>
-            </div>
-          )}
-
-          {result && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* 文章标题 */}
-              <Card style={{ borderLeft: '4px solid #1890ff' }}>
-                <div className="p-6">
-                  <Title level={3} className="mb-0">
-                    {result.title}
-                  </Title>
+            {loading && (
+              <div className="text-center py-12">
+                <Spin size="large" />
+                <div className="mt-4">
+                  <Text type="secondary">正在搜索网络热点并生成文章...</Text>
                 </div>
-              </Card>
+              </div>
+            )}
 
-              <Row gutter={24}>
-                {/* 文章摘要 */}
-                <Col span={16}>
-                  <Card>
+            {result && (
+              <div>
+                <div style={{ marginBottom: '24px' }}>
+                  <Card style={{ borderLeft: '4px solid #1890ff' }}>
                     <div className="p-6">
-                      <Title level={4} className="flex items-center mb-4">
-                        <FileTextOutlined className="mr-2" />
-                        文章摘要
+                      <Title level={3} className="mb-0">
+                        {result.title}
                       </Title>
-                      <Paragraph className="text-base leading-relaxed whitespace-pre-wrap">
-                        {result.summary}
-                      </Paragraph>
                     </div>
                   </Card>
-                </Col>
-
-                {/* 侧边信息 */}
-                <Col span={8}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {/* 关键要点 */}
-                    <Card size="small">
-                      <div className="p-4">
-                        <Title level={5} className="mb-3">关键要点</Title>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          {result.keyPoints.map((point, index) => (
-                            <div key={index} className="flex items-start gap-2">
-                              <span className="inline-block w-5 h-5 text-white text-xs rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#1890ff' }}>
-                                {index + 1}
-                              </span>
-                              <Text className="text-sm">{point}</Text>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </Card>
-
-                    {/* 相关话题 */}
-                    <Card size="small">
-                      <div className="p-4">
-                        <Title level={5} className="mb-3">相关话题</Title>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          {result.relatedTopics.map((topic, index) => (
-                            <Tag key={index} color="blue" className="mb-1">
-                              {topic}
-                            </Tag>
-                          ))}
-                        </div>
-                      </div>
-                    </Card>
-
-                    {/* 信息来源 */}
-                    <Card size="small">
-                      <div className="p-4">
-                        <Title level={5} className="mb-3">信息来源</Title>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                          {result.sources.map((source, index) => (
-                            <div key={index}>
-                              <Text type="secondary" style={{ fontSize: '12px' }}>
-                                • {source}
-                              </Text>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </Card>
-                  </div>
-                </Col>
-              </Row>
-
-              {/* 独特观点 */}
-              <Card style={{ background: 'linear-gradient(135deg, #e6f7ff 0%, #f9f0ff 100%)', border: '1px solid #91d5ff' }}>
-                <div className="p-6">
-                  <Title level={4} className="flex items-center mb-4" style={{ color: '#1890ff' }}>
-                    <BulbOutlined className="mr-2" />
-                    独特观点
-                  </Title>
-                  <Paragraph className="text-base mb-0" style={{ color: '#096dd9' }}>
-                    {result.uniqueViewpoint}
-                  </Paragraph>
                 </div>
-              </Card>
-            </div>
-          )}
-        </div>
-      </Card>
+
+                <Row gutter={24} style={{ marginBottom: '24px' }}>
+                  <Col span={16}>
+                    <Card>
+                      <div className="p-6">
+                        <Title level={4} className="mb-4">
+                          <FileTextOutlined style={{ marginRight: '8px' }} />
+                          文章摘要
+                        </Title>
+                        <Paragraph className="text-base leading-relaxed">
+                          {result.summary}
+                        </Paragraph>
+                      </div>
+                    </Card>
+                  </Col>
+
+                  <Col span={8}>
+                    <div>
+                      <div style={{ marginBottom: '16px' }}>
+                        <Card size="small">
+                          <div className="p-4">
+                            <Title level={5} className="mb-3">关键要点</Title>
+                            <div>
+                              {result.keyPoints.map((point, index) => (
+                                <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+                                  <span 
+                                    style={{ 
+                                      display: 'flex', 
+                                      width: '20px', 
+                                      height: '20px', 
+                                      backgroundColor: '#1890ff',
+                                      color: 'white', 
+                                      fontSize: '12px', 
+                                      borderRadius: '50%', 
+                                      alignItems: 'center', 
+                                      justifyContent: 'center',
+                                      flexShrink: 0,
+                                      marginTop: '2px'
+                                    }}
+                                  >
+                                    {index + 1}
+                                  </span>
+                                  <Text style={{ fontSize: '14px' }}>{point}</Text>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </Card>
+                      </div>
+
+                      <div style={{ marginBottom: '16px' }}>
+                        <Card size="small">
+                          <div className="p-4">
+                            <Title level={5} className="mb-3">相关话题</Title>
+                            <div>
+                              {result.relatedTopics.map((topic, index) => (
+                                <Tag key={index} color="blue" style={{ marginBottom: '4px' }}>
+                                  {topic}
+                                </Tag>
+                              ))}
+                            </div>
+                          </div>
+                        </Card>
+                      </div>
+
+                      <div>
+                        <Card size="small">
+                          <div className="p-4">
+                            <Title level={5} className="mb-3">信息来源</Title>
+                            <div>
+                              {result.sources.map((source, index) => (
+                                <div key={index} style={{ marginBottom: '4px' }}>
+                                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                                    • {source}
+                                  </Text>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </Card>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+
+                <Card style={{ 
+                  background: 'linear-gradient(135deg, #e6f7ff 0%, #f9f0ff 100%)', 
+                  border: '1px solid #91d5ff' 
+                }}>
+                  <div className="p-6">
+                    <Title level={4} className="mb-4" style={{ color: '#1890ff' }}>
+                      <BulbOutlined style={{ marginRight: '8px' }} />
+                      独特观点
+                    </Title>
+                    <Paragraph className="text-base mb-0" style={{ color: '#096dd9' }}>
+                      {result.uniqueViewpoint}
+                    </Paragraph>
+                  </div>
+                </Card>
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
-
-export default NetworkArticleTool;
