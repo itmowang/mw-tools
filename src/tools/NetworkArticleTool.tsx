@@ -121,7 +121,7 @@ const NetworkArticleTool: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="max-w-6xl mx-auto p-6" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <Card>
         <div className="p-6">
           <Title level={2} className="mb-4">
@@ -176,7 +176,7 @@ const NetworkArticleTool: React.FC = () => {
           )}
 
           {result && (
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* 文章标题 */}
               <Card style={{ borderLeft: '4px solid #1890ff' }}>
                 <div className="p-6">
@@ -204,12 +204,12 @@ const NetworkArticleTool: React.FC = () => {
 
                 {/* 侧边信息 */}
                 <Col span={8}>
-                  <div className="space-y-4">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {/* 关键要点 */}
                     <Card size="small">
                       <div className="p-4">
                         <Title level={5} className="mb-3">关键要点</Title>
-                        <div className="space-y-2">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                           {result.keyPoints.map((point, index) => (
                             <div key={index} className="flex items-start gap-2">
                               <span className="inline-block w-5 h-5 text-white text-xs rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#1890ff' }}>
@@ -226,7 +226,7 @@ const NetworkArticleTool: React.FC = () => {
                     <Card size="small">
                       <div className="p-4">
                         <Title level={5} className="mb-3">相关话题</Title>
-                        <div className="space-y-2">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                           {result.relatedTopics.map((topic, index) => (
                             <Tag key={index} color="blue" className="mb-1">
                               {topic}
@@ -240,7 +240,7 @@ const NetworkArticleTool: React.FC = () => {
                     <Card size="small">
                       <div className="p-4">
                         <Title level={5} className="mb-3">信息来源</Title>
-                        <div className="space-y-1">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           {result.sources.map((source, index) => (
                             <div key={index}>
                               <Text type="secondary" style={{ fontSize: '12px' }}>
