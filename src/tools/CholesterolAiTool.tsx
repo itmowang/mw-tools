@@ -14,6 +14,9 @@ interface AnalysisResult {
   healthRisk: string;
   recommendations: string[];
   alternatives: string[];
+  gallstoneAdvice: string;
+  postCholecystectomyAdvice: string;
+  dailyIntakePercentage: string;
   summary: string;
 }
 
@@ -55,24 +58,28 @@ export const CholesterolAiTool = () => {
       // 动态导入 Google Generative AI
       const { GoogleGenerativeAI } = await import("@google/generative-ai");
       const genAI = new GoogleGenerativeAI(aiApiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
-      const prompt = `作为营养专家，请分析以下食物的胆固醇含量和健康影响：
+      const prompt = `你是一位专业的营养师和医学专家。请严格按照以下JSON格式分析食物的胆固醇含量和健康影响。
 
 食物: ${foodInput}
 ${userAge ? `用户年龄: ${userAge}岁` : ''}
 ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${userHeight}cm` : ''}
 
-请以JSON格式返回分析结果，包含以下字段：
+请严格按照以下JSON格式返回，不要添加任何额外的文字说明，只返回纯JSON：
+
 {
-  "cholesterolLevel": "胆固醇含量描述（如：高、中、低，具体数值）",
-  "healthRisk": "健康风险评估",
+  "cholesterolLevel": "胆固醇含量描述（如：高胆固醇：每100g含XXXmg）",
+  "healthRisk": "健康风险评估（如：高风险、中等风险、低风险）",
   "recommendations": ["建议1", "建议2", "建议3"],
-  "alternatives": ["替代食物1", "替代食物2"],
-  "summary": "总结性建议"
+  "alternatives": ["替代食物1", "替代食物2", "替代食物3"],
+  "gallstoneAdvice": "针对胆结石患者的具体饮食建议",
+  "postCholecystectomyAdvice": "胆囊切除术后患者的饮食注意事项",
+  "dailyIntakePercentage": "建议每日摄入量占总热量的百分比（如：不超过每日总热量的5%）",
+  "summary": "综合健康建议总结"
 }
 
-请用中文回答，建议要实用且具体。`;
+请确保返回的是有效的JSON格式，用中文回答，建议要实用且具体。`;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
@@ -82,19 +89,34 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
         throw new Error('AI 响应为空');
       }
 
+      // 清理响应文本，移除markdown代码块标记
+      let cleanText = text.trim();
+      if (cleanText.startsWith('```json')) {
+        cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanText.startsWith('```')) {
+        cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+
       // 尝试解析JSON
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const analysisResult = JSON.parse(jsonMatch[0]);
-        setResult(analysisResult);
-      } else {
-        // 如果没有JSON格式，创建一个简单的结果
+      try {
+        const analysisResult = JSON.parse(cleanText);
+        // 验证必需字段
+        if (analysisResult.cholesterolLevel && analysisResult.healthRisk) {
+          setResult(analysisResult);
+        } else {
+          throw new Error('缺少必需字段');
+        }
+      } catch (parseError) {
+        // 如果JSON解析失败，创建一个简单的结果
         setResult({
-          cholesterolLevel: "无法解析",
-          healthRisk: "分析失败",
-          recommendations: ["请重新尝试分析"],
+          cholesterolLevel: "解析失败",
+          healthRisk: "无法评估",
+          recommendations: ["请重新尝试分析", "检查网络连接"],
           alternatives: [],
-          summary: text
+          gallstoneAdvice: "请咨询医生",
+          postCholecystectomyAdvice: "请咨询医生",
+          dailyIntakePercentage: "无法确定",
+          summary: `原始响应: ${text.substring(0, 200)}...`
         });
       }
 
@@ -279,10 +301,14 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
                 <h3 className="font-semibold text-sm mb-2">健康风险</h3>
                 <p className="text-sm text-muted-foreground">{result.healthRisk}</p>
               </div>
+              <div>
+                <h3 className="font-semibold text-sm mb-2">每日建议摄入量</h3>
+                <p className="text-sm text-muted-foreground">{result.dailyIntakePercentage}</p>
+              </div>
             </div>
 
             <div>
-              <h3 className="font-semibold text-sm mb-2">建议</h3>
+              <h3 className="font-semibold text-sm mb-2">一般建议</h3>
               <ul className="text-sm text-muted-foreground space-y-1">
                 {result.recommendations.map((rec, idx) => (
                   <li key={idx} className="flex items-start">
@@ -291,6 +317,20 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
                   </li>
                 ))}
               </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-sm mb-2">胆结石患者建议</h3>
+              <p className="text-sm text-muted-foreground bg-orange-50 dark:bg-orange-950 p-3 rounded-lg border border-orange-200 dark:border-orange-800">
+                {result.gallstoneAdvice}
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-sm mb-2">胆囊切除术后建议</h3>
+              <p className="text-sm text-muted-foreground bg-blue-50 dark:bg-blue-950 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                {result.postCholecystectomyAdvice}
+              </p>
             </div>
 
             {result.alternatives.length > 0 && (
