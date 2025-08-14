@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Brain, Heart, Apple, Settings } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useToast } from "@/hooks/use-toast";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface AnalysisResult {
   cholesterolLevel: string;
@@ -52,6 +53,9 @@ export const CholesterolAiTool = () => {
 
     setLoading(true);
     try {
+      const genAI = new GoogleGenerativeAI(aiApiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
       const prompt = `作为营养专家，请分析以下食物的胆固醇含量和健康影响：
 
 食物: ${foodInput}
@@ -69,29 +73,12 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
 
 请用中文回答，建议要实用且具体。`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${aiApiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`API 请求失败: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
       
       if (!text) {
-        throw new Error('AI 响应格式异常');
+        throw new Error('AI 响应为空');
       }
 
       // 尝试解析JSON
