@@ -8,7 +8,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Brain, Heart, Apple, Settings } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useToast } from "@/hooks/use-toast";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface AnalysisResult {
   cholesterolLevel: string;
@@ -53,6 +52,8 @@ export const CholesterolAiTool = () => {
 
     setLoading(true);
     try {
+      // 动态导入 Google Generative AI
+      const { GoogleGenerativeAI } = await import("@google/generative-ai");
       const genAI = new GoogleGenerativeAI(aiApiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -175,7 +176,7 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
               )}
               <Alert>
                 <AlertDescription>
-                  获取免费 API Key: <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google AI Studio</a>
+                  获取免费 API Key: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google AI Studio</a>
                 </AlertDescription>
               </Alert>
             </div>
