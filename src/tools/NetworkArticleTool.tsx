@@ -7,10 +7,12 @@ const { Title, Paragraph, Text } = Typography;
 interface ArticleResult {
   title: string;
   summary: string;
+  detailedContent: string;
   keyPoints: string[];
   uniqueViewpoint: string;
   relatedTopics: string[];
   sources: string[];
+  imagePrompts: string[];
 }
 
 export const NetworkArticleTool = () => {
@@ -18,6 +20,7 @@ export const NetworkArticleTool = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ArticleResult | null>(null);
   const [error, setError] = useState('');
+  const [generatedImages, setGeneratedImages] = useState<string[]>([]);
 
   const PERPLEXITY_API_KEY = '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';
 
@@ -35,6 +38,10 @@ export const NetworkArticleTool = () => {
 ## 文章摘要
 
 ${result.summary}
+
+## 详细内容
+
+${result.detailedContent}
 
 ## 关键要点
 
@@ -58,6 +65,9 @@ ${result.sources.map(source => `- ${source}`).join('\n')}`;
 
 文章摘要：
 ${result.summary}
+
+详细内容：
+${result.detailedContent}
 
 关键要点：
 ${result.keyPoints.map((point, index) => `${index + 1}. ${point}`).join('\n')}
@@ -113,19 +123,23 @@ ${result.sources.join('、')}`;
 1. 搜索最新的相关信息和热点
 2. 提供简洁的文章标题
 3. 写出400-600字的文章摘要
-4. 提取3-5个关键要点
-5. 提供一个独特的观点或分析角度
-6. 列出2-3个相关话题
-7. 提及信息来源
+4. 写出800-1200字的详细内容，包含多个段落和深入分析
+5. 提取5-8个关键要点
+6. 提供一个独特的观点或分析角度
+7. 列出3-5个相关话题
+8. 提及信息来源
+9. 为文章生成2-3个适合的图片描述提示
 
 请严格按照以下JSON格式返回：
 {
   "title": "文章标题",
   "summary": "文章摘要内容",
-  "keyPoints": ["要点1", "要点2", "要点3"],
+  "detailedContent": "详细的文章内容，包含多个段落",
+  "keyPoints": ["要点1", "要点2", "要点3", "要点4", "要点5"],
   "uniqueViewpoint": "独特观点或分析",
-  "relatedTopics": ["相关话题1", "相关话题2"],
-  "sources": ["来源1", "来源2"]
+  "relatedTopics": ["相关话题1", "相关话题2", "相关话题3"],
+  "sources": ["来源1", "来源2"],
+  "imagePrompts": ["图片描述1", "图片描述2", "图片描述3"]
 }`
             },
             {
@@ -167,16 +181,50 @@ ${result.sources.join('、')}`;
         throw new Error('返回的数据格式不正确，请重试');
       }
 
-      if (!parsedResult.title || !parsedResult.summary) {
+      if (!parsedResult.title || !parsedResult.summary || !parsedResult.detailedContent) {
         throw new Error('返回数据缺少必要字段');
       }
 
       setResult(parsedResult);
+      
+      // 生成配图
+      if (parsedResult.imagePrompts && parsedResult.imagePrompts.length > 0) {
+        generateImages(parsedResult.imagePrompts);
+      }
     } catch (err) {
       console.error('生成文章失败:', err);
       setError(err instanceof Error ? err.message : '生成文章时发生未知错误');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const generateImages = async (prompts: string[]) => {
+    try {
+      const imagePromises = prompts.slice(0, 3).map(async (prompt, index) => {
+        const response = await fetch('/api/generate-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: `${prompt}，高质量插图风格`,
+            width: 512,
+            height: 384
+          })
+        });
+        
+        if (response.ok) {
+          const blob = await response.blob();
+          return URL.createObjectURL(blob);
+        }
+        return null;
+      });
+
+      const images = await Promise.all(imagePromises);
+      setGeneratedImages(images.filter(img => img !== null) as string[]);
+    } catch (error) {
+      console.log('图片生成失败:', error);
     }
   };
 
@@ -259,61 +307,94 @@ ${result.sources.join('、')}`;
                 </div>
 
                 <Row gutter={24} style={{ marginBottom: '24px' }}>
-                  <Col span={16}>
+                  <Col span={24}>
                     <Card>
                       <div className="p-6">
                         <Title level={4} className="mb-4">
                           <FileTextOutlined style={{ marginRight: '8px' }} />
                           文章摘要
                         </Title>
-                        <Paragraph className="text-base leading-relaxed">
+                        <Paragraph className="text-base leading-relaxed mb-6">
                           {result.summary}
                         </Paragraph>
+                        
+                        {generatedImages.length > 0 && (
+                          <div className="mb-6">
+                            <Title level={5} className="mb-3">配图</Title>
+                            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                              {generatedImages.map((image, index) => (
+                                <img 
+                                  key={index} 
+                                  src={image} 
+                                  alt={`配图${index + 1}`}
+                                  style={{ 
+                                    width: '200px', 
+                                    height: '150px', 
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                    border: '1px solid #f0f0f0'
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <Title level={4} className="mb-4">
+                          详细内容
+                        </Title>
+                        <div style={{ whiteSpace: 'pre-line', lineHeight: '1.8' }}>
+                          <Text className="text-base">
+                            {result.detailedContent}
+                          </Text>
+                        </div>
+                      </div>
+                    </Card>
+                  </Col>
+                </Row>
+
+                <Row gutter={24} style={{ marginBottom: '24px' }}>
+                  <Col span={12}>
+                    <Card size="small">
+                      <div className="p-4">
+                        <Title level={5} className="mb-3">关键要点</Title>
+                        <div>
+                          {result.keyPoints.map((point, index) => (
+                            <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
+                              <span 
+                                style={{ 
+                                  width: '24px', 
+                                  height: '24px', 
+                                  backgroundColor: '#1890ff',
+                                  color: 'white', 
+                                  fontSize: '12px', 
+                                  borderRadius: '50%', 
+                                  display: 'flex',
+                                  alignItems: 'center', 
+                                  justifyContent: 'center',
+                                  flexShrink: 0,
+                                  marginTop: '2px'
+                                }}
+                              >
+                                {index + 1}
+                              </span>
+                              <Text style={{ fontSize: '14px', lineHeight: '1.6' }}>{point}</Text>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </Card>
                   </Col>
 
-                  <Col span={8}>
+                  <Col span={12}>
                     <div>
-                      <div style={{ marginBottom: '16px' }}>
-                        <Card size="small">
-                          <div className="p-4">
-                            <Title level={5} className="mb-3">关键要点</Title>
-                            <div>
-                              {result.keyPoints.map((point, index) => (
-                                <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
-                                  <span 
-                                    style={{ 
-                                      display: 'flex', 
-                                      width: '20px', 
-                                      height: '20px', 
-                                      backgroundColor: '#1890ff',
-                                      color: 'white', 
-                                      fontSize: '12px', 
-                                      borderRadius: '50%', 
-                                      alignItems: 'center', 
-                                      justifyContent: 'center',
-                                      flexShrink: 0,
-                                      marginTop: '2px'
-                                    }}
-                                  >
-                                    {index + 1}
-                                  </span>
-                                  <Text style={{ fontSize: '14px' }}>{point}</Text>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </Card>
-                      </div>
-
                       <div style={{ marginBottom: '16px' }}>
                         <Card size="small">
                           <div className="p-4">
                             <Title level={5} className="mb-3">相关话题</Title>
                             <div>
                               {result.relatedTopics.map((topic, index) => (
-                                <Tag key={index} color="blue" style={{ marginBottom: '4px' }}>
+                                <Tag key={index} color="blue" style={{ marginBottom: '8px', fontSize: '13px' }}>
                                   {topic}
                                 </Tag>
                               ))}
@@ -328,7 +409,7 @@ ${result.sources.join('、')}`;
                             <Title level={5} className="mb-3">信息来源</Title>
                             <div>
                               {result.sources.map((source, index) => (
-                                <div key={index} style={{ marginBottom: '4px' }}>
+                                <div key={index} style={{ marginBottom: '6px' }}>
                                   <Text type="secondary" style={{ fontSize: '12px' }}>
                                     • {source}
                                   </Text>
