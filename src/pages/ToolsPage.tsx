@@ -31,6 +31,7 @@ import { MpegPlayerTool } from "@/tools/MpegPlayerTool";
 import { FlvPlayerTool } from "@/tools/FlvPlayerTool";
 import { WebSocketTool } from "@/tools/WebSocketTool";
 import { CholesterolAiTool } from "@/tools/CholesterolAiTool";
+import NetworkArticleTool from "@/tools/NetworkArticleTool";
 
 const ToolRenderer = ({ id }: { id: ToolId }) => {
   switch (id) {
@@ -92,6 +93,8 @@ const ToolRenderer = ({ id }: { id: ToolId }) => {
       return <WebSocketTool />;
     case "cholesterol-ai":
       return <CholesterolAiTool />;
+    case "network-article":
+      return <NetworkArticleTool />;
     default:
       return null;
   }
