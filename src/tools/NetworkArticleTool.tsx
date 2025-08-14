@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Input, Card, Alert, Spin, Typography, Row, Col, Tag } from 'antd';
-import { SearchOutlined, FileTextOutlined, GlobalOutlined, BulbOutlined } from '@ant-design/icons';
+import { Button, Input, Card, Alert, Spin, Typography, Row, Col, Tag, message, Dropdown } from 'antd';
+import { SearchOutlined, FileTextOutlined, GlobalOutlined, BulbOutlined, CopyOutlined, DownOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -20,6 +20,70 @@ export const NetworkArticleTool = () => {
   const [error, setError] = useState('');
 
   const PERPLEXITY_API_KEY = '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';
+
+  const copyToClipboard = (text: string, format: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      message.success(`已复制${format}格式到剪贴板`);
+    }).catch(() => {
+      message.error('复制失败');
+    });
+  };
+
+  const generateMarkdown = (result: ArticleResult) => {
+    return `# ${result.title}
+
+## 文章摘要
+
+${result.summary}
+
+## 关键要点
+
+${result.keyPoints.map((point, index) => `${index + 1}. ${point}`).join('\n')}
+
+## 独特观点
+
+${result.uniqueViewpoint}
+
+## 相关话题
+
+${result.relatedTopics.map(topic => `- ${topic}`).join('\n')}
+
+## 信息来源
+
+${result.sources.map(source => `- ${source}`).join('\n')}`;
+  };
+
+  const generatePlainText = (result: ArticleResult) => {
+    return `${result.title}
+
+文章摘要：
+${result.summary}
+
+关键要点：
+${result.keyPoints.map((point, index) => `${index + 1}. ${point}`).join('\n')}
+
+独特观点：
+${result.uniqueViewpoint}
+
+相关话题：
+${result.relatedTopics.join('、')}
+
+信息来源：
+${result.sources.join('、')}`;
+  };
+
+  const getCopyMenuItems = (result: ArticleResult) => [
+    {
+      key: 'markdown',
+      label: 'Markdown格式',
+      onClick: () => copyToClipboard(generateMarkdown(result), 'Markdown')
+    },
+    {
+      key: 'text',
+      label: '纯文本格式',
+      onClick: () => copyToClipboard(generatePlainText(result), '纯文本')
+    }
+  ];
 
   const generateArticle = async () => {
     if (!topic.trim()) {
@@ -177,9 +241,19 @@ export const NetworkArticleTool = () => {
                 <div style={{ marginBottom: '24px' }}>
                   <Card style={{ borderLeft: '4px solid #1890ff' }}>
                     <div className="p-6">
-                      <Title level={3} className="mb-0">
-                        {result.title}
-                      </Title>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Title level={3} className="mb-0">
+                          {result.title}
+                        </Title>
+                        <Dropdown
+                          menu={{ items: getCopyMenuItems(result) }}
+                          trigger={['click']}
+                        >
+                          <Button type="primary" icon={<CopyOutlined />}>
+                            复制文章 <DownOutlined />
+                          </Button>
+                        </Dropdown>
+                      </div>
                     </div>
                   </Card>
                 </div>
