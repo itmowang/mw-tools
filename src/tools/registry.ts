@@ -26,7 +26,8 @@ export type ToolId =
   | "mpegts"
   | "flv"
   | "websocket"
-  | "social-insurance";
+  | "social-insurance"
+  | "cholesterol-ai";
 
 
 
@@ -59,4 +60,5 @@ export const toolMeta: Record<ToolId, { title: string; description: string; path
   mpegts: { title: "MPEG-TS 在线播放", description: "粘贴 .ts/mpeg 地址测试播放，显示详细错误。", path: "/mpegts" },
   flv: { title: "FLV 在线播放", description: "粘贴 flv 地址测试播放，显示详细错误。", path: "/flv" },
   websocket: { title: "WebSocket 在线测试", description: "连接服务器发送/接收消息，详细错误与日志。", path: "/websocket" },
+  "cholesterol-ai": { title: "胆固醇食物建议", description: "AI智能分析食物胆固醇含量，提供个性化饮食建议。", path: "/cholesterol-ai" },
 };

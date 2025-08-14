@@ -101,7 +101,7 @@ const groupedItems: ItemType[] = [
     label: "AI 功能",
     icon: <AppstoreOutlined />,
     children: [
-      { key: "/ai", label: "敬请期待", icon: <AppstoreOutlined />, disabled: true },
+      { key: "/cholesterol-ai", label: "胆固醇食物建议", icon: <AppstoreOutlined /> },
     ],
   },
 ];

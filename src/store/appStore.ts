@@ -5,9 +5,11 @@ export type ThemeMode = "light" | "dark";
 interface AppState {
   theme: ThemeMode;
   search: string;
+  aiApiKey: string;
   setSearch: (v: string) => void;
   toggleTheme: () => void;
   setTheme: (m: ThemeMode) => void;
+  setAiApiKey: (key: string) => void;
 }
 
 const getInitialTheme = (): ThemeMode => {
@@ -18,9 +20,15 @@ const getInitialTheme = (): ThemeMode => {
   return prefersDark ? "dark" : "light";
 };
 
+const getInitialAiApiKey = (): string => {
+  if (typeof window === "undefined") return "";
+  return localStorage.getItem("uf-ai-api-key") || "";
+};
+
 export const useAppStore = create<AppState>((set, get) => ({
   theme: getInitialTheme(),
   search: "",
+  aiApiKey: getInitialAiApiKey(),
   setSearch: (v) => set({ search: v }),
   toggleTheme: () => {
     const next = get().theme === "dark" ? "light" : "dark";
@@ -36,6 +44,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       document.documentElement.classList.toggle("dark", m === "dark");
     }
     localStorage.setItem("uf-theme", m);
+  },
+  setAiApiKey: (key) => {
+    set({ aiApiKey: key });
+    localStorage.setItem("uf-ai-api-key", key);
   },
 }));
 
