@@ -102,6 +102,7 @@ const groupedItems: ItemType[] = [
     icon: <AppstoreOutlined />,
     children: [
       { key: "/cholesterol-ai", label: "胆固醇食物建议", icon: <AppstoreOutlined /> },
+      { key: "/network-article", label: "网络文章生成器", icon: <CodeOutlined /> },
     ],
   },
 ];
