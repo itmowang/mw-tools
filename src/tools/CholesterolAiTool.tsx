@@ -5,9 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Brain, Heart, Apple, Settings } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Brain, Heart, Apple, Settings, TrendingUp, AlertTriangle } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useToast } from "@/hooks/use-toast";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 
 interface AnalysisResult {
   cholesterolLevel: string;
@@ -17,6 +19,8 @@ interface AnalysisResult {
   gallstoneAdvice: string;
   postCholecystectomyAdvice: string;
   dailyIntakePercentage: string;
+  dailyIntakeAmount: string;
+  riskLevel: "低风险" | "中等风险" | "高风险";
   summary: string;
 }
 
@@ -71,15 +75,20 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
 {
   "cholesterolLevel": "胆固醇含量描述（如：高胆固醇：每100g含XXXmg）",
   "healthRisk": "健康风险评估（如：高风险、中等风险、低风险）",
+  "riskLevel": "低风险",
   "recommendations": ["建议1", "建议2", "建议3"],
   "alternatives": ["替代食物1", "替代食物2", "替代食物3"],
   "gallstoneAdvice": "针对胆结石患者的具体饮食建议",
   "postCholecystectomyAdvice": "胆囊切除术后患者的饮食注意事项",
-  "dailyIntakePercentage": "建议每日摄入量占总热量的百分比（如：不超过每日总热量的5%）",
+  "dailyIntakePercentage": "5",
+  "dailyIntakeAmount": "建议每日摄入量（如：50-100g）",
   "summary": "综合健康建议总结"
 }
 
-请确保返回的是有效的JSON格式，用中文回答，建议要实用且具体。`;
+注意：
+- riskLevel必须是"低风险"、"中等风险"或"高风险"之一
+- dailyIntakePercentage只返回数字，不要百分号和其他文字
+- 请确保返回的是有效的JSON格式，用中文回答，建议要实用且具体。`;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
@@ -111,11 +120,13 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
         setResult({
           cholesterolLevel: "解析失败",
           healthRisk: "无法评估",
+          riskLevel: "中等风险",
           recommendations: ["请重新尝试分析", "检查网络连接"],
           alternatives: [],
           gallstoneAdvice: "请咨询医生",
           postCholecystectomyAdvice: "请咨询医生",
-          dailyIntakePercentage: "无法确定",
+          dailyIntakePercentage: "5",
+          dailyIntakeAmount: "无法确定",
           summary: `原始响应: ${text.substring(0, 200)}...`
         });
       }
@@ -134,6 +145,47 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 生成图表数据
+  const generateChartData = () => {
+    if (!result) return [];
+    
+    const percentage = parseFloat(result.dailyIntakePercentage) || 5;
+    const remaining = Math.max(0, 100 - percentage);
+    
+    return [
+      {
+        name: '该食物建议摄入',
+        value: percentage,
+        color: getRiskColor(result.riskLevel)
+      },
+      {
+        name: '其他食物',
+        value: remaining,
+        color: '#e5e7eb'
+      }
+    ];
+  };
+
+  // 根据风险等级获取颜色
+  const getRiskColor = (risk: string) => {
+    switch (risk) {
+      case '低风险': return '#10b981'; // green
+      case '中等风险': return '#f59e0b'; // yellow
+      case '高风险': return '#ef4444'; // red
+      default: return '#6b7280'; // gray
+    }
+  };
+
+  // 获取风险等级的图标
+  const getRiskIcon = (risk: string) => {
+    switch (risk) {
+      case '低风险': return <TrendingUp className="w-4 h-4 text-green-500" />;
+      case '中等风险': return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+      case '高风险': return <AlertTriangle className="w-4 h-4 text-red-500" />;
+      default: return null;
     }
   };
 
@@ -291,65 +343,178 @@ ${userWeight && userHeight ? `用户BMI参考: 体重${userWeight}kg, 身高${us
               <CardTitle>分析结果</CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="font-semibold text-sm mb-2">胆固醇含量</h3>
-                <p className="text-sm text-muted-foreground">{result.cholesterolLevel}</p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-sm mb-2">健康风险</h3>
-                <p className="text-sm text-muted-foreground">{result.healthRisk}</p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-sm mb-2">每日建议摄入量</h3>
-                <p className="text-sm text-muted-foreground">{result.dailyIntakePercentage}</p>
-              </div>
+          <CardContent className="space-y-6">
+            {/* 概览卡片 */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="border-l-4 border-l-primary">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">胆固醇含量</p>
+                      <p className="text-lg font-bold">{result.cholesterolLevel}</p>
+                    </div>
+                    <Heart className="w-8 h-8 text-primary opacity-60" />
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className={`border-l-4 ${result.riskLevel === '高风险' ? 'border-l-red-500' : result.riskLevel === '中等风险' ? 'border-l-yellow-500' : 'border-l-green-500'}`}>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">风险等级</p>
+                      <div className="flex items-center space-x-2">
+                        {getRiskIcon(result.riskLevel)}
+                        <Badge variant={result.riskLevel === '高风险' ? 'destructive' : result.riskLevel === '中等风险' ? 'default' : 'secondary'}>
+                          {result.riskLevel}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-l-4 border-l-blue-500">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">建议每日摄入</p>
+                      <p className="text-lg font-bold">{result.dailyIntakeAmount}</p>
+                    </div>
+                    <Apple className="w-8 h-8 text-blue-500 opacity-60" />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
-            <div>
-              <h3 className="font-semibold text-sm mb-2">一般建议</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                {result.recommendations.map((rec, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                    {rec}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-sm mb-2">胆结石患者建议</h3>
-              <p className="text-sm text-muted-foreground bg-orange-50 dark:bg-orange-950 p-3 rounded-lg border border-orange-200 dark:border-orange-800">
-                {result.gallstoneAdvice}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-sm mb-2">胆囊切除术后建议</h3>
-              <p className="text-sm text-muted-foreground bg-blue-50 dark:bg-blue-950 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
-                {result.postCholecystectomyAdvice}
-              </p>
-            </div>
-
-            {result.alternatives.length > 0 && (
-              <div>
-                <h3 className="font-semibold text-sm mb-2">推荐替代食物</h3>
-                <div className="flex flex-wrap gap-2">
-                  {result.alternatives.map((alt, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-xs">
-                      {alt}
-                    </span>
-                  ))}
+            {/* 每日摄入百分比图表 */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5" />
+                  <span>每日摄入占比建议</span>
+                </CardTitle>
+                <CardDescription>
+                  该食物在每日总热量中的建议占比
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={generateChartData()}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {generateChartData().map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        formatter={(value) => [`${value}%`, '占比']}
+                        labelFormatter={(label) => label}
+                      />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
-              </div>
-            )}
+                <div className="mt-4 p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-center">
+                    <span className="font-semibold" style={{ color: getRiskColor(result.riskLevel) }}>
+                      {result.dailyIntakePercentage}%
+                    </span>
+                    {' '}是该食物在每日饮食中的建议占比
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
 
-            <div>
-              <h3 className="font-semibold text-sm mb-2">总结</h3>
-              <p className="text-sm text-muted-foreground">{result.summary}</p>
+            {/* 综合建议和总结 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">一般建议</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {result.recommendations.map((rec, idx) => (
+                      <li key={idx} className="flex items-start text-sm">
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        <span className="text-muted-foreground">{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">健康总结</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {result.summary}
+                  </p>
+                </CardContent>
+              </Card>
             </div>
+
+            {/* 专业建议 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center space-x-2">
+                    <AlertTriangle className="w-4 h-4 text-orange-500" />
+                    <span>胆结石患者建议</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    {result.gallstoneAdvice}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center space-x-2">
+                    <Heart className="w-4 h-4 text-blue-500" />
+                    <span>胆囊切除术后建议</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    {result.postCholecystectomyAdvice}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* 替代食物推荐 */}
+            {result.alternatives.length > 0 && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">推荐替代食物</CardTitle>
+                  <CardDescription>
+                    这些食物可以作为更健康的替代选择
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {result.alternatives.map((alt, idx) => (
+                      <Badge key={idx} variant="outline" className="px-3 py-1">
+                        {alt}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </CardContent>
         </Card>
       )}
