@@ -54,7 +54,7 @@ export const CholesterolAiTool = () => {
     setLoading(true);
     try {
       const genAI = new GoogleGenerativeAI(aiApiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const prompt = `作为营养专家，请分析以下食物的胆固醇含量和健康影响：
 
