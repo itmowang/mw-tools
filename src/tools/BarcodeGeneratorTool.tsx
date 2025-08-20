@@ -1,8 +1,13 @@
-import { Card, Input, Select, Button, Radio, Space, message } from "antd";
 import { useState, useEffect, useRef, useCallback } from "react";
 import * as bwipjs from 'bwip-js';
-
-const { Option } = Select;
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 // 条形码类型 
 const BARCODE_TYPES = [
@@ -85,7 +90,7 @@ export const BarcodeGeneratorTool = () => {
       setDataUrl(url);
     } catch (error: any) {
       console.error("生成失败:", error);
-      message.error("生成失败，请检查输入内容和格式要求");
+      toast.error("生成失败，请检查输入内容和格式要求");
       setDataUrl("");
     } finally {
       setIsGenerating(false);
@@ -114,127 +119,143 @@ export const BarcodeGeneratorTool = () => {
         const blob = await response.blob();
         const item = new ClipboardItem({ "image/png": blob });
         await navigator.clipboard.write([item]);
-        message.success("已复制到剪贴板");
+        toast.success("已复制到剪贴板");
       } else {
-        message.error("浏览器不支持图片复制功能");
+        toast.error("浏览器不支持图片复制功能");
       }
     } catch {
-      message.error("复制失败");
+      toast.error("复制失败");
     }
   };
 
   return (
-    <Card title="条码生成器" className="hover-scale">
-      <Space direction="vertical" className="w-full" size="large">
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle>条码生成器</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
         {/* 类型选择 */}
         <div>
-          <div className="mb-2 font-medium">生成类型</div>
-          <Radio.Group value={codeType} onChange={(e) => setCodeType(e.target.value)}>
-            <Radio value="barcode">条形码</Radio>
-            <Radio value="qrcode">二维码</Radio>
-          </Radio.Group>
+          <Label className="text-base font-medium">生成类型</Label>
+          <RadioGroup value={codeType} onValueChange={(value: "barcode" | "qrcode") => setCodeType(value)} className="flex gap-6 mt-2">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="barcode" id="barcode" />
+              <Label htmlFor="barcode">条形码</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="qrcode" id="qrcode" />
+              <Label htmlFor="qrcode">二维码</Label>
+            </div>
+          </RadioGroup>
         </div>
 
         {/* 内容输入 */}
         <div>
-          <div className="mb-2 font-medium">内容</div>
-          <Input.TextArea
+          <Label className="text-base font-medium">内容</Label>
+          <Textarea
             placeholder={codeType === "barcode" ? "请输入数字或字符" : "请输入文本或链接"}
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={3}
+            className="mt-2"
           />
         </div>
 
         {/* 格式选择 */}
         {codeType === "barcode" ? (
           <div>
-            <div className="mb-2 font-medium">条形码格式</div>
-            <Select
-              value={barcodeType}
-              onChange={setBarcodeType}
-              style={{ width: 200 }}
-            >
-              {BARCODE_TYPES.map(type => (
-                <Option key={type.value} value={type.value}>
-                  {type.label}
-                </Option>
-              ))}
+            <Label className="text-base font-medium">条形码格式</Label>
+            <Select value={barcodeType} onValueChange={setBarcodeType}>
+              <SelectTrigger className="w-48 mt-2">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {BARCODE_TYPES.map(type => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
         ) : (
           <div>
-            <div className="mb-2 font-medium">二维码格式</div>
-            <Select
-              value={qrcodeType}
-              onChange={setQrcodeType}
-              style={{ width: 200 }}
-            >
-              {QRCODE_TYPES.map(type => (
-                <Option key={type.value} value={type.value}>
-                  {type.label}
-                </Option>
-              ))}
+            <Label className="text-base font-medium">二维码格式</Label>
+            <Select value={qrcodeType} onValueChange={setQrcodeType}>
+              <SelectTrigger className="w-48 mt-2">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {QRCODE_TYPES.map(type => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
         )}
 
         {/* 参数设置 */}
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-6">
           {codeType === "barcode" ? (
             <>
               <div>
-                <div className="mb-2 font-medium">高度</div>
-                <Select
-                  value={barcodeHeight}
-                  onChange={setBarcodeHeight}
-                  style={{ width: 120 }}
-                >
-                  {[60, 80, 100, 120, 150, 200].map(h => (
-                    <Option key={h} value={h}>{h}px</Option>
-                  ))}
+                <Label className="text-base font-medium">高度</Label>
+                <Select value={barcodeHeight.toString()} onValueChange={(value) => setBarcodeHeight(Number(value))}>
+                  <SelectTrigger className="w-32 mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[60, 80, 100, 120, 150, 200].map(h => (
+                      <SelectItem key={h} value={h.toString()}>{h}px</SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
-                <div>
-                  <div className="mb-2 font-medium">宽度</div>
-                  <Select
-                    value={barcodeWidth}
-                    onChange={setBarcodeWidth}
-                    style={{ width: 120 }}
-                  >
+              <div>
+                <Label className="text-base font-medium">宽度</Label>
+                <Select value={barcodeWidth.toString()} onValueChange={(value) => setBarcodeWidth(Number(value))}>
+                  <SelectTrigger className="w-32 mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(w => (
-                      <Option key={w} value={w}>{w}x</Option>
+                      <SelectItem key={w} value={w.toString()}>{w}x</SelectItem>
                     ))}
-                  </Select>
-                </div>
+                  </SelectContent>
+                </Select>
+              </div>
             </>
           ) : (
             <>
               <div>
-                <div className="mb-2 font-medium">尺寸</div>
-                <Select
-                  value={size}
-                  onChange={setSize}
-                  style={{ width: 120 }}
-                >
-                  {[128, 192, 256, 320, 384].map(s => (
-                    <Option key={s} value={s}>{s}px</Option>
-                  ))}
+                <Label className="text-base font-medium">尺寸</Label>
+                <Select value={size.toString()} onValueChange={(value) => setSize(Number(value))}>
+                  <SelectTrigger className="w-32 mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[128, 192, 256, 320, 384].map(s => (
+                      <SelectItem key={s} value={s.toString()}>{s}px</SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
               {qrcodeType === "qrcode" && (
                 <div>
-                  <div className="mb-2 font-medium">纠错级别</div>
-                  <Select
-                    value={qrcodeErrorLevel}
-                    onChange={setQrcodeErrorLevel}
-                    style={{ width: 120 }}
-                  >
-                    {QR_ERROR_LEVELS.map(level => (
-                      <Option key={level.value} value={level.value}>
-                        {level.label}
-                      </Option>
-                    ))}
+                  <Label className="text-base font-medium">纠错级别</Label>
+                  <Select value={qrcodeErrorLevel} onValueChange={setQrcodeErrorLevel}>
+                    <SelectTrigger className="w-32 mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {QR_ERROR_LEVELS.map(level => (
+                        <SelectItem key={level.value} value={level.value}>
+                          {level.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </div>
               )}
@@ -244,16 +265,16 @@ export const BarcodeGeneratorTool = () => {
 
         {/* 操作按钮 */}
         <div className="flex gap-3">
-          <Button type="primary" disabled={!dataUrl || isGenerating} onClick={handleDownload}>
+          <Button disabled={!dataUrl || isGenerating} onClick={handleDownload}>
             {isGenerating ? "生成中..." : "下载PNG"}
           </Button>
-          <Button disabled={!dataUrl || isGenerating} onClick={handleCopy}>
+          <Button variant="outline" disabled={!dataUrl || isGenerating} onClick={handleCopy}>
             复制图片
           </Button>
         </div>
 
         {/* 预览区域 */}
-        <div className="flex justify-center py-4 min-h-[200px] border border-dashed border-gray-300 rounded-lg bg-white">
+        <div className="flex justify-center py-8 min-h-[200px] border-2 border-dashed border-muted rounded-lg bg-muted/10">
           <canvas 
             ref={canvasRef} 
             style={{ 
@@ -262,14 +283,14 @@ export const BarcodeGeneratorTool = () => {
             }}
           />
           {!dataUrl && (
-            <div className="flex items-center justify-center text-gray-400">
+            <div className="flex items-center justify-center text-muted-foreground">
               {isGenerating ? "生成中..." : text.trim() ? "请等待生成..." : "请输入内容"}
             </div>
           )}
         </div>
 
         {/* 格式说明 */}
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-muted-foreground">
           <div className="mb-2 font-medium">格式说明：</div>
           <ul className="list-disc list-inside space-y-1">
             {codeType === "barcode" ? (
@@ -289,7 +310,7 @@ export const BarcodeGeneratorTool = () => {
             )}
           </ul>
         </div>
-      </Space>
+      </CardContent>
     </Card>
   );
 };
