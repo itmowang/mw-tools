@@ -39,29 +39,6 @@ export const BarcodeGeneratorTool = () => {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
-    generateCode();
-  }, [codeType, text, barcodeType, qrcodeType, qrcodeErrorLevel, size, barcodeHeight]);
-
-  const generateCode = async () => {
-    if (!text.trim()) {
-      setDataUrl("");
-      return;
-    }
-
-    try {
-      if (codeType === "barcode") {
-        generateBarcode();
-      } else {
-        await generateQRCode();
-      }
-    } catch (error) {
-      console.error("生成失败:", error);
-      message.error("生成失败，请检查输入内容");
-      setDataUrl("");
-    }
-  };
-
   const generateBarcode = () => {
     if (!canvasRef.current) return;
     
@@ -78,7 +55,8 @@ export const BarcodeGeneratorTool = () => {
       const url = canvasRef.current.toDataURL("image/png");
       setDataUrl(url);
     } catch (error) {
-      throw new Error("条形码生成失败");
+      console.error("条形码生成失败:", error);
+      setDataUrl("");
     }
   };
 
@@ -91,9 +69,33 @@ export const BarcodeGeneratorTool = () => {
       });
       setDataUrl(url);
     } catch (error) {
-      throw new Error("二维码生成失败");
+      console.error("二维码生成失败:", error);
+      setDataUrl("");
     }
   };
+
+  useEffect(() => {
+    const generateCode = async () => {
+      if (!text.trim()) {
+        setDataUrl("");
+        return;
+      }
+
+      try {
+        if (codeType === "barcode") {
+          generateBarcode();
+        } else {
+          await generateQRCode();
+        }
+      } catch (error) {
+        console.error("生成失败:", error);
+        message.error("生成失败，请检查输入内容");
+        setDataUrl("");
+      }
+    };
+
+    generateCode();
+  }, [codeType, text, barcodeType, qrcodeErrorLevel, size, barcodeHeight]);
 
   const handleDownload = () => {
     if (!dataUrl) return;
