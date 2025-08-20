@@ -6,7 +6,6 @@ import { JsonFormatterTool } from "@/tools/JsonFormatterTool";
 import { ImageEditorTool } from "@/tools/ImageEditorTool";
 import { QrCodeTool } from "@/tools/QrCodeTool";
 import { QrCodeBatchTool } from "@/tools/QrCodeBatchTool";
-import { BarcodeGeneratorTool } from "@/tools/BarcodeGeneratorTool";
 import { Base64Tool } from "@/tools/Base64Tool";
 import { UrlTool } from "@/tools/UrlTool";
 import { PasswordTool } from "@/tools/PasswordTool";
@@ -48,8 +47,6 @@ const ToolRenderer = ({ id }: { id: ToolId }) => {
       return <QrCodeTool />;
     case "qrcode-batch":
       return <QrCodeBatchTool />;
-    case "barcode-generator":
-      return <BarcodeGeneratorTool />;
     case "base64":
       return <Base64Tool />;
     case "url":

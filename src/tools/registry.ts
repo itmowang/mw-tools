@@ -5,7 +5,6 @@ export type ToolId =
   | "image"
   | "qrcode"
   | "qrcode-batch"
-  | "barcode-generator"
   | "base64"
   | "url"
   | "password"
@@ -40,7 +39,6 @@ export const toolMeta: Record<ToolId, { title: string; description: string; path
   image: { title: "图像编辑", description: "本地图像灰度/亮度调整与下载。", path: "/image" },
   qrcode: { title: "二维码生成", description: "输入文text/链接，实时生成二维码。", path: "/qrcode" },
   "qrcode-batch": { title: "二维码批量生成", description: "多条内容批量生成二维码，支持下载。", path: "/qrcode-batch" },
-  "barcode-generator": { title: "条码生成器", description: "生成多种格式的条形码和二维码。", path: "/barcode-generator" },
   base64: { title: "Base64 编解码", description: "快速进行 Base64 编码与解码。", path: "/base64" },
   url: { title: "URL 编解码", description: "URL 编码与解码，避免参数乱码。", path: "/url" },
   password: { title: "随机密码生成", description: "按规则生成强密码。", path: "/password" },
