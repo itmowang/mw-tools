@@ -1,5 +1,5 @@
 import { Card, Input, Select, Button, Radio, Space, message } from "antd";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import QRCode from "qrcode";
 import JsBarcode from "jsbarcode";
 
@@ -41,7 +41,7 @@ export const BarcodeGeneratorTool = () => {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const generateBarcode = () => {
+  const generateBarcode = useCallback(() => {
     if (!canvasRef.current) return;
     
     try {
@@ -60,9 +60,9 @@ export const BarcodeGeneratorTool = () => {
       console.error("条形码生成失败:", error);
       throw new Error("条形码生成失败，请检查输入内容");
     }
-  };
+  }, [text, barcodeType, barcodeHeight]);
 
-  const generateQRCode = async () => {
+  const generateQRCode = useCallback(async () => {
     try {
       let url: string;
       
@@ -108,9 +108,9 @@ export const BarcodeGeneratorTool = () => {
       console.error("二维码生成失败:", error);
       throw new Error("二维码生成失败，请检查输入内容");
     }
-  };
+  }, [text, qrcodeType, qrcodeErrorLevel, size]);
 
-  const generateCode = async () => {
+  const generateCode = useCallback(async () => {
     if (!text.trim()) {
       setDataUrl("");
       return;
@@ -131,11 +131,11 @@ export const BarcodeGeneratorTool = () => {
     } finally {
       setIsGenerating(false);
     }
-  };
+  }, [codeType, text, barcodeType, generateBarcode, generateQRCode]);
 
   useEffect(() => {
     generateCode();
-  }, [codeType, text, barcodeType, qrcodeType, qrcodeErrorLevel, size, barcodeHeight]);
+  }, [generateCode]);
 
   const handleDownload = () => {
     if (!dataUrl) return;
