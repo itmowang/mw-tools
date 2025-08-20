@@ -258,8 +258,7 @@ export const BarcodeGeneratorTool = () => {
             ref={canvasRef} 
             style={{ 
               display: dataUrl ? "block" : "none",
-              maxWidth: "100%", 
-              maxHeight: "400px" 
+              maxWidth: "100%"
             }}
           />
           {!dataUrl && (
