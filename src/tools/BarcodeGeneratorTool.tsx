@@ -1,24 +1,23 @@
 import { Card, Input, Select, Button, Radio, Space, message } from "antd";
 import { useState, useEffect, useRef, useCallback } from "react";
-import QRCode from "qrcode";
-import JsBarcode from "jsbarcode";
+import * as bwipjs from 'bwip-js';
 
 const { Option } = Select;
 
-// 条形码类型
+// 条形码类型 
 const BARCODE_TYPES = [
-  { value: "CODE128", label: "Code 128" },
-  { value: "CODE39", label: "Code 39" },
-  { value: "EAN13", label: "EAN-13" },
-  { value: "UPC", label: "UPC" },
-  { value: "ITF14", label: "Interleaved 2 of 5" },
+  { value: "code128", label: "Code 128" },
+  { value: "code39", label: "Code 39" },
+  { value: "ean13", label: "EAN-13" },
+  { value: "upca", label: "UPC-A" },
+  { value: "itf14", label: "ITF-14" },
 ];
 
 // 二维码类型
 const QRCODE_TYPES = [
-  { value: "QR", label: "QR Code" },
-  { value: "PDF417", label: "PDF417 (模拟)" },
-  { value: "DATAMATRIX", label: "DataMatrix (模拟)" },
+  { value: "qrcode", label: "QR Code" },
+  { value: "pdf417", label: "PDF417" },
+  { value: "datamatrix", label: "DataMatrix" },
 ];
 
 const QR_ERROR_LEVELS = [
@@ -31,8 +30,8 @@ const QR_ERROR_LEVELS = [
 export const BarcodeGeneratorTool = () => {
   const [codeType, setCodeType] = useState<"barcode" | "qrcode">("barcode");
   const [text, setText] = useState("123456789012");
-  const [barcodeType, setBarcodeType] = useState("CODE128");
-  const [qrcodeType, setQrcodeType] = useState("QR");
+  const [barcodeType, setBarcodeType] = useState("code128");
+  const [qrcodeType, setQrcodeType] = useState("qrcode");
   const [qrcodeErrorLevel, setQrcodeErrorLevel] = useState("M");
   const [size, setSize] = useState(256);
   const [barcodeHeight, setBarcodeHeight] = useState(100);
@@ -41,97 +40,56 @@ export const BarcodeGeneratorTool = () => {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const generateBarcode = useCallback(() => {
-    if (!canvasRef.current) return;
-    
-    try {
-      JsBarcode(canvasRef.current, text, {
-        format: barcodeType,
-        width: 2,
-        height: barcodeHeight,
-        displayValue: true,
-        fontSize: 14,
-        margin: 10,
-      });
-      
-      const url = canvasRef.current.toDataURL("image/png");
-      setDataUrl(url);
-    } catch (error) {
-      console.error("条形码生成失败:", error);
-      throw new Error("条形码生成失败，请检查输入内容");
-    }
-  }, [text, barcodeType, barcodeHeight]);
-
-  const generateQRCode = useCallback(async () => {
-    try {
-      let url: string;
-      
-      if (qrcodeType === "QR") {
-        // 标准 QR Code
-        url = await QRCode.toDataURL(text, {
-          width: size,
-          margin: 2,
-          errorCorrectionLevel: qrcodeErrorLevel as any,
-        });
-      } else if (qrcodeType === "PDF417") {
-        // PDF417 模拟 - 生成密集的 QR Code
-        url = await QRCode.toDataURL(text, {
-          width: size,
-          margin: 1,
-          errorCorrectionLevel: "H",
-          color: {
-            dark: "#000000",
-            light: "#FFFFFF"
-          }
-        });
-      } else if (qrcodeType === "DATAMATRIX") {
-        // DataMatrix 模拟 - 生成小尺寸的 QR Code
-        url = await QRCode.toDataURL(text, {
-          width: Math.min(size, 200),
-          margin: 1,
-          errorCorrectionLevel: "M",
-          color: {
-            dark: "#000000",
-            light: "#FFFFFF"
-          }
-        });
-      } else {
-        url = await QRCode.toDataURL(text, {
-          width: size,
-          margin: 2,
-          errorCorrectionLevel: "M",
-        });
-      }
-      
-      setDataUrl(url);
-    } catch (error) {
-      console.error("二维码生成失败:", error);
-      throw new Error("二维码生成失败，请检查输入内容");
-    }
-  }, [text, qrcodeType, qrcodeErrorLevel, size]);
-
   const generateCode = useCallback(async () => {
     if (!text.trim()) {
       setDataUrl("");
       return;
     }
+    
+    if (!canvasRef.current) return;
 
     setIsGenerating(true);
     try {
-      // PDF417 和 DataMatrix 都是二维码类型，不是条形码
-      if (codeType === "barcode" && BARCODE_TYPES.some(type => type.value === barcodeType)) {
-        generateBarcode();
+      let bcid: string;
+      let options: any = {};
+
+      if (codeType === "barcode") {
+        bcid = barcodeType;
+        options = {
+          text: text,
+          scale: 2,
+          height: barcodeHeight,
+          includetext: true,
+          textxalign: 'center',
+        };
       } else {
-        await generateQRCode();
+        bcid = qrcodeType;
+        options = {
+          text: text,
+          scale: 2,
+        };
+        
+        if (qrcodeType === "qrcode") {
+          options.eclevel = qrcodeErrorLevel;
+        }
       }
+
+      // 使用 bwip-js 生成条码
+      bwipjs.toCanvas(canvasRef.current, {
+        bcid: bcid,
+        ...options
+      });
+
+      const url = canvasRef.current.toDataURL("image/png");
+      setDataUrl(url);
     } catch (error: any) {
       console.error("生成失败:", error);
-      message.error(error.message || "生成失败，请检查输入内容");
+      message.error("生成失败，请检查输入内容和格式要求");
       setDataUrl("");
     } finally {
       setIsGenerating(false);
     }
-  }, [codeType, text, barcodeType, generateBarcode, generateQRCode]);
+  }, [text, codeType, barcodeType, qrcodeType, qrcodeErrorLevel, barcodeHeight]);
 
   useEffect(() => {
     generateCode();
@@ -249,7 +207,7 @@ export const BarcodeGeneratorTool = () => {
                   ))}
                 </Select>
               </div>
-              {qrcodeType === "QR" && (
+              {qrcodeType === "qrcode" && (
                 <div>
                   <div className="mb-2 font-medium">纠错级别</div>
                   <Select
@@ -281,25 +239,14 @@ export const BarcodeGeneratorTool = () => {
 
         {/* 预览区域 */}
         <div className="flex justify-center py-4 min-h-[200px] border border-dashed border-gray-300 rounded-lg bg-white">
-          {codeType === "barcode" ? (
-            <canvas 
-              ref={canvasRef} 
-              style={{ 
-                display: dataUrl ? "block" : "none",
-                maxWidth: "100%", 
-                maxHeight: "400px" 
-              }}
-            />
-          ) : (
-            dataUrl && (
-              <img 
-                src={dataUrl} 
-                alt="二维码" 
-                style={{ maxWidth: "100%", maxHeight: "400px" }}
-                className="object-contain"
-              />
-            )
-          )}
+          <canvas 
+            ref={canvasRef} 
+            style={{ 
+              display: dataUrl ? "block" : "none",
+              maxWidth: "100%", 
+              maxHeight: "400px" 
+            }}
+          />
           {!dataUrl && (
             <div className="flex items-center justify-center text-gray-400">
               {isGenerating ? "生成中..." : text.trim() ? "请等待生成..." : "请输入内容"}
@@ -316,14 +263,14 @@ export const BarcodeGeneratorTool = () => {
                 <li>Code 128: 支持数字、字母和符号</li>
                 <li>Code 39: 支持数字、大写字母和部分符号</li>
                 <li>EAN-13: 支持13位数字(商品条码)</li>
-                <li>UPC: 支持12位数字(北美商品条码)</li>
-                <li>Interleaved 2 of 5: 支持偶数位数字</li>
+                <li>UPC-A: 支持12位数字(北美商品条码)</li>
+                <li>ITF-14: 支持14位数字(物流条码)</li>
               </>
             ) : (
               <>
                 <li>QR Code: 标准二维码，支持各种文本</li>
-                <li>PDF417 (模拟): 使用高密度QR码模拟，适合大量数据</li>
-                <li>DataMatrix (模拟): 使用小尺寸QR码模拟，适合小空间标识</li>
+                <li>PDF417: 高密度条码，适合大量数据存储</li>
+                <li>DataMatrix: 紧凑型二维码，适合小空间标识</li>
               </>
             )}
           </ul>
