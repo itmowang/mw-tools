@@ -93,6 +93,7 @@ const groupedItems: ItemType[] = [
       { key: "/image", label: "图像编辑", icon: <PictureOutlined /> },
       { key: "/qrcode", label: "二维码生成", icon: <QrcodeOutlined /> },
       { key: "/qrcode-batch", label: "二维码批量生成", icon: <QrcodeOutlined /> },
+      { key: "/barcode-generator", label: "条码生成器", icon: <QrcodeOutlined /> },
       { key: "/svg", label: "SVG 编辑器", icon: <PictureOutlined /> },
     ],
   },
