@@ -28,6 +28,7 @@ const App = () => {
               <Route path="/image" element={<ToolsPage defaultTool="image" />} />
               <Route path="/qrcode" element={<ToolsPage defaultTool="qrcode" />} />
               <Route path="/qrcode-batch" element={<ToolsPage defaultTool="qrcode-batch" />} />
+              <Route path="/barcode-generator" element={<ToolsPage defaultTool="barcode-generator" />} />
               <Route path="/base64" element={<ToolsPage defaultTool="base64" />} />
               <Route path="/url" element={<ToolsPage defaultTool="url" />} />
               <Route path="/password" element={<ToolsPage defaultTool="password" />} />
