@@ -35,6 +35,7 @@ export const BarcodeGeneratorTool = () => {
   const [qrcodeErrorLevel, setQrcodeErrorLevel] = useState("M");
   const [size, setSize] = useState(256);
   const [barcodeHeight, setBarcodeHeight] = useState(100);
+  const [barcodeWidth, setBarcodeWidth] = useState(2);
   const [dataUrl, setDataUrl] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
   
@@ -57,7 +58,7 @@ export const BarcodeGeneratorTool = () => {
         bcid = barcodeType;
         options = {
           text: text,
-          scale: 2,
+          scale: barcodeWidth,
           height: barcodeHeight,
           includetext: true,
           textxalign: 'center',
@@ -89,7 +90,7 @@ export const BarcodeGeneratorTool = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [text, codeType, barcodeType, qrcodeType, qrcodeErrorLevel, barcodeHeight]);
+  }, [text, codeType, barcodeType, qrcodeType, qrcodeErrorLevel, barcodeHeight, barcodeWidth]);
 
   useEffect(() => {
     generateCode();
@@ -181,18 +182,32 @@ export const BarcodeGeneratorTool = () => {
         {/* 参数设置 */}
         <div className="flex flex-wrap gap-4">
           {codeType === "barcode" ? (
-            <div>
-              <div className="mb-2 font-medium">高度</div>
-              <Select
-                value={barcodeHeight}
-                onChange={setBarcodeHeight}
-                style={{ width: 120 }}
-              >
-                {[60, 80, 100, 120, 150].map(h => (
-                  <Option key={h} value={h}>{h}px</Option>
-                ))}
-              </Select>
-            </div>
+            <>
+              <div>
+                <div className="mb-2 font-medium">高度</div>
+                <Select
+                  value={barcodeHeight}
+                  onChange={setBarcodeHeight}
+                  style={{ width: 120 }}
+                >
+                  {[60, 80, 100, 120, 150, 200].map(h => (
+                    <Option key={h} value={h}>{h}px</Option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <div className="mb-2 font-medium">宽度</div>
+                <Select
+                  value={barcodeWidth}
+                  onChange={setBarcodeWidth}
+                  style={{ width: 120 }}
+                >
+                  {[1, 2, 3, 4, 5, 6].map(w => (
+                    <Option key={w} value={w}>{w}x</Option>
+                  ))}
+                </Select>
+              </div>
+            </>
           ) : (
             <>
               <div>
