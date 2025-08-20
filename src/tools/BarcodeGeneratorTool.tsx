@@ -118,7 +118,8 @@ export const BarcodeGeneratorTool = () => {
 
     setIsGenerating(true);
     try {
-      if (codeType === "barcode") {
+      // PDF417 和 DataMatrix 都是二维码类型，不是条形码
+      if (codeType === "barcode" && BARCODE_TYPES.some(type => type.value === barcodeType)) {
         generateBarcode();
       } else {
         await generateQRCode();
