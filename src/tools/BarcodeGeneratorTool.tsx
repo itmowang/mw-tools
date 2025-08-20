@@ -195,18 +195,18 @@ export const BarcodeGeneratorTool = () => {
                   ))}
                 </Select>
               </div>
-              <div>
-                <div className="mb-2 font-medium">宽度</div>
-                <Select
-                  value={barcodeWidth}
-                  onChange={setBarcodeWidth}
-                  style={{ width: 120 }}
-                >
-                  {[1, 2, 3, 4, 5, 6].map(w => (
-                    <Option key={w} value={w}>{w}x</Option>
-                  ))}
-                </Select>
-              </div>
+                <div>
+                  <div className="mb-2 font-medium">宽度</div>
+                  <Select
+                    value={barcodeWidth}
+                    onChange={setBarcodeWidth}
+                    style={{ width: 120 }}
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(w => (
+                      <Option key={w} value={w}>{w}x</Option>
+                    ))}
+                  </Select>
+                </div>
             </>
           ) : (
             <>
